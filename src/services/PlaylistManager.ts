@@ -20,7 +20,13 @@ export class PlaylistManager {
   constructor(audioEngine: AudioEngine) {
     this.playlist = new TrackList<Song>();
     this.audioEngine = audioEngine;
-    this.audioEngine.onEnded = () => this.next();
+    this.audioEngine.onEnded = () => void this.playNextSong();
+  }
+
+  private async playNextSong(): Promise<void> {
+    if (this.playlist.size === 0) return;
+    if (this.currentIndex < 0 || this.currentIndex >= this.playlist.size - 1) return;
+    await this.playSong(this.currentIndex + 1);
   }
 
   async addSong(file: File, title: string, artist: string, position: InsertPosition = 'tail'): Promise<void> {
